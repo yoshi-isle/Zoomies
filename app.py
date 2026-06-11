@@ -2,8 +2,6 @@ import discord
 import os
 from discord.ext import commands
 from dotenv import load_dotenv
-import logging
-import asyncio
 
 
 class Bot(commands.Bot):
@@ -13,6 +11,17 @@ class Bot(commands.Bot):
         intents.message_content = True
         super().__init__(command_prefix="!", intents=intents)
 
+    async def setup_hook(self) -> None:
+        cogs = [
+            "cogs.submission_cog",
+        ]
+        for cog in cogs:
+            try:
+                await self.load_extension(cog)
+                print(f"{cog} loaded successfully.")
+            except Exception as e:
+                print(f"Failed to load {cog}: {e}")
+
     async def on_ready(self):
         await self.tree.sync()
         print(f"{self.user} has connected to Discord!")
@@ -21,11 +30,4 @@ class Bot(commands.Bot):
 bot = Bot()
 
 if __name__ == "__main__":
-
-    async def main():
-        discord.utils.setup_logging(level=logging.INFO)
-
-        # Run the Discord bot
-        await bot.start(os.getenv("DISCORD_BOT_TOKEN"))
-
-    asyncio.run(main())
+    bot.run(os.getenv("DISCORD_BOT_TOKEN"))

@@ -13,7 +13,7 @@ class Bot(commands.Bot):
 
     async def setup_hook(self) -> None:
         cogs = [
-            "cogs.submission_cog",
+            "cogs.submission",
         ]
         for cog in cogs:
             try:

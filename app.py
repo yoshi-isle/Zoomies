@@ -1,20 +1,30 @@
-import discord
 import os
+import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+
+# Import what you need
+from database import init_db, SessionLocal, get_db
+from models import Activity, Submission   # ← Full IntelliSense here
+
+load_dotenv()
 
 
 class Bot(commands.Bot):
     def __init__(self):
-        load_dotenv()
-        intents = discord.Intents.all()
-        intents.message_content = True
-        super().__init__(command_prefix="!", intents=intents)
+        super().__init__(
+            command_prefix="!",
+            intents=discord.Intents.all()
+        )
+        
+        init_db()
+        
+        self.SessionLocal = SessionLocal
+        self.Activity = Activity
+        self.Submission = Submission
 
     async def setup_hook(self) -> None:
-        cogs = [
-            "cogs.submission",
-        ]
+        cogs = ["cogs.submission", "cogs.static_embeds"]
         for cog in cogs:
             try:
                 await self.load_extension(cog)

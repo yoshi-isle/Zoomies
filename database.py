@@ -8,17 +8,15 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-engine = create_engine(DATABASE_URL, echo=False)   # echo=True for debugging
+engine = create_engine(DATABASE_URL, echo=False)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def init_db():
-    """Create tables if they don't exist yet"""
     Base.metadata.create_all(bind=engine)
 
 
 def get_db():
-    """Dependency pattern - recommended for cogs"""
     db: Session = SessionLocal()
     try:
         yield db

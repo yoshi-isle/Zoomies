@@ -3,9 +3,8 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-# Import what you need
-from database import init_db, SessionLocal, get_db
-from models import Activity, Submission   # ← Full IntelliSense here
+from database import init_db, SessionLocal
+from models import Activity, Submission
 
 load_dotenv()
 

@@ -4,7 +4,7 @@ import discord
 
 class Embeds:
     def the_hunt_winners():
-        embed = discord.Embed(title="The Hunt (Winners)",
+        embed = discord.Embed(title="The Hunt Winners",
                             colour=0xfe86e4)
 
         embed.add_field(name="<:huberte:1514809555152932864> Chapter I (Hueycoatl)",

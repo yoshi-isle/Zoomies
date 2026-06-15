@@ -6,6 +6,11 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 class Base(DeclarativeBase):
     pass
 
+class HighestKC(Base):
+    __tablename__ = "highest_killcount"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    message_id: Mapped[str] = mapped_column(String(50), nullable=False)
+    last_processed: Mapped[date] = mapped_column(Date, nullable=False)
 
 class Activity(Base):
     __tablename__ = "activity"

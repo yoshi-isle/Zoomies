@@ -23,7 +23,7 @@ class Bot(commands.Bot):
         self.Submission = Submission
 
     async def setup_hook(self) -> None:
-        cogs = ["cogs.submission", "cogs.static_embeds"]
+        cogs = ["cogs.submission", "cogs.static_embeds", "cogs.highest_killcounts"]
         for cog in cogs:
             try:
                 await self.load_extension(cog)

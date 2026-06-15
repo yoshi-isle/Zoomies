@@ -23,3 +23,8 @@ class Embeds:
         embed.set_thumbnail(url="https://i.imgur.com/8GI8n4g.png")
 
         return embed
+    
+    def highest_kcs():
+        embed = discord.Embed(title="Highest KCs",
+                            colour=0xfe86e4)
+        return embed

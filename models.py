@@ -2,7 +2,6 @@ from datetime import date
 from sqlalchemy import Integer, String, Boolean, BigInteger, Date
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-
 class Base(DeclarativeBase):
     pass
 
@@ -33,6 +32,18 @@ class Submission(Base):
     players: Mapped[str] = mapped_column(String(250), nullable=False)
     metric: Mapped[int] = mapped_column(BigInteger, nullable=False)
     imgur_url: Mapped[str] = mapped_column(String(50), nullable=True)
+
+    def __repr__(self):
+        return f"<Submission(id={self.id}, metric={self.metric})>"
+    
+class HighestKCReprocess(Base):
+    __tablename__ = "highest_kc_reprocess"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    discord_message_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    category: Mapped[int] = mapped_column(Integer, nullable=False)
+    metric: Mapped[int] = mapped_column(Integer, nullable=False)
+    last_updated: Mapped[date] = mapped_column(Date, nullable = True)
 
     def __repr__(self):
         return f"<Submission(id={self.id}, metric={self.metric})>"

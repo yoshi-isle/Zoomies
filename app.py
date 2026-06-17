@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
+from cogs.TestCog import TestPager
 from database import init_db, SessionLocal
 from models import Activity, Submission
 
@@ -23,7 +24,8 @@ class Bot(commands.Bot):
         self.Submission = Submission
 
     async def setup_hook(self) -> None:
-        cogs = ["cogs.submission", "cogs.static_embeds", "cogs.highest_killcounts", "cogs.TestCog"]
+        cogs = ["cogs.submission", "cogs.static_embeds", "cogs.highest_killcounts"]
+        self.add_view(TestPager())
         for cog in cogs:
             try:
                 await self.load_extension(cog)

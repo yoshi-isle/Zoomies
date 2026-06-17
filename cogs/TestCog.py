@@ -4,9 +4,8 @@ from discord.ext import commands
 from discord.ui import View, Button
 
 class TestPager(View):
-    def __init__(self, ctx: commands.Context):
-        super().__init__(timeout=300)  # 5 minute timeout
-        self.ctx = ctx
+    def __init__(self):
+        super().__init__(timeout=None)
         self.current_page = 1
         self.max_pages = 8
 
@@ -20,52 +19,47 @@ class TestPager(View):
         
         embed.set_image(url=new_image)
         print(new_image)
-        # Disable buttons for current page if you want visual feedback
-        for item in self.children:
-            if isinstance(item, Button):
-                item.disabled = int(item.label) == self.current_page
-
         await interaction.response.edit_message(embed=embed, view=self)
 
-    @discord.ui.button(label="1", style=discord.ButtonStyle.primary, custom_id="page_1")
+    @discord.ui.button(label="World 1", style=discord.ButtonStyle.primary, custom_id="page_1")
     async def page1(self, interaction: discord.Interaction, button: Button):
         self.current_page = 1
-        await self.update_embed(interaction, url="https://i.imgur.com/QBROp7f.png")
+        await self.update_embed(interaction, new_image="https://i.imgur.com/QBROp7f.png")
 
-    @discord.ui.button(label="2", style=discord.ButtonStyle.primary, custom_id="page_2")
+    @discord.ui.button(label="World 2", style=discord.ButtonStyle.primary, custom_id="page_2")
     async def page2(self, interaction: discord.Interaction, button: Button):
         self.current_page = 2
-        await self.update_embed(interaction)
+        await self.update_embed(interaction, new_image="https://i.imgur.com/QBROp7f.png")
 
-    @discord.ui.button(label="3", style=discord.ButtonStyle.primary, custom_id="page_3")
+    @discord.ui.button(label="World 3", style=discord.ButtonStyle.primary, custom_id="page_3")
     async def page3(self, interaction: discord.Interaction, button: Button):
         self.current_page = 3
-        await self.update_embed(interaction)
+        await self.update_embed(interaction, new_image="https://i.imgur.com/QBROp7f.png")
 
-    @discord.ui.button(label="4", style=discord.ButtonStyle.primary, custom_id="page_4")
+    @discord.ui.button(label="World 4", style=discord.ButtonStyle.primary, custom_id="page_4")
     async def page4(self, interaction: discord.Interaction, button: Button):
         self.current_page = 4
         await self.update_embed(interaction, new_image="https://i.imgur.com/kYCOpML.png")
 
-    @discord.ui.button(label="5", style=discord.ButtonStyle.primary, custom_id="page_5")
+    @discord.ui.button(label="World 5", style=discord.ButtonStyle.primary, custom_id="page_5")
     async def page5(self, interaction: discord.Interaction, button: Button):
         self.current_page = 5
-        await self.update_embed(interaction)
+        await self.update_embed(interaction, new_image="https://i.imgur.com/QBROp7f.png")
 
     @discord.ui.button(label="World 6", style=discord.ButtonStyle.primary, custom_id="page_6")
     async def page6(self, interaction: discord.Interaction, button: Button):
         self.current_page = 6
-        await self.update_embed(interaction)
+        await self.update_embed(interaction, new_image="https://i.imgur.com/QBROp7f.png")
 
-    @discord.ui.button(label="7", style=discord.ButtonStyle.primary, custom_id="page_7")
+    @discord.ui.button(label="World 7", style=discord.ButtonStyle.primary, custom_id="page_7")
     async def page7(self, interaction: discord.Interaction, button: Button):
         self.current_page = 7
-        await self.update_embed(interaction)
+        await self.update_embed(interaction, new_image="https://i.imgur.com/QBROp7f.png")
 
-    @discord.ui.button(label="8", style=discord.ButtonStyle.primary, custom_id="page_8")
+    @discord.ui.button(label="World 8", style=discord.ButtonStyle.primary, custom_id="page_8")
     async def page8(self, interaction: discord.Interaction, button: Button):
         self.current_page = 8
-        await self.update_embed(interaction)
+        await self.update_embed(interaction, new_image="https://i.imgur.com/QBROp7f.png")
 
 
 class TestCog(commands.Cog):
@@ -82,7 +76,7 @@ class TestCog(commands.Cog):
         embed.set_image(url="https://i.imgur.com/QBROp7f.png")
         embed.set_footer(text=f"test")
 
-        view = TestPager(interaction)
+        view = TestPager()
         await interaction.channel.send(embed=embed, view=view)
 
 async def setup(bot: commands.Bot):

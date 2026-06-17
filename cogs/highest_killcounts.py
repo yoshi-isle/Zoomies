@@ -17,17 +17,43 @@ class HighestKillcountCog(commands.Cog):
     async def post_highest_kcs(
         self,
         interaction: discord.Interaction,
+        category: int = 1
     ):
+        
+        await interaction.response.defer(thinking=True)
         wom = WiseOldManClient()
         await wom._connect()
-        for boss in all_boss_groups:
-            print(boss.bosses)
-            # print(boss_name)
-            normies, irons = await wom.get_top_placements_hiscores(metric=boss.bosses[0])
+        data = {}
+        
+        print("1")
 
-            print(normies, irons)
+        group = all_boss_groups[category-1]
 
-        await interaction.channel.send(embed=Embeds.highest_kcs())
+
+        print("2")
+        print(group)
+        for boss in group.bosses:
+            if category == 1:
+                metric = boss
+                category_name = 'God Wars Dungeon'
+            elif category == 2:
+                metric = boss
+                category_name = 'Raids'
+
+            normies, irons = await wom.get_top_placements_hiscores(metric=metric)
+
+            data[boss] = {
+                "normie": {
+                    "name": normies[0].player.username,
+                    "kills": normies[0].data.kills
+                },
+                "iron": {
+                    "name": irons[0].player.username,
+                    "kills": irons[0].data.kills
+                }
+            }
+
+        await interaction.channel.send(embed=Embeds.highest_kcs(data, category_name))
         await interaction.response.send_message(f"Displaying the highest KCs, {interaction.user.mention}!", ephemeral=True)
 
 async def setup(bot: commands.Bot):
@@ -70,6 +96,7 @@ class WiseOldManClient:
         number_of_ranks: int = 30,
         placements: int = 1,
     ) -> Tuple[List[wom.Player], List[wom.Player]]:
+        
         result = await self.client.groups.get_hiscores(id=group_id, metric=metric, limit=number_of_ranks)
         
         if result.is_ok:
@@ -98,6 +125,9 @@ gwd = HiscoreBossGroup(
     bosses=[
         wom.Metric.CommanderZilyana,
         wom.Metric.GeneralGraardor,
+        wom.Metric.KrilTsutsaroth,
+        wom.Metric.Kreearra,
+        wom.Metric.Nex
     ],
 )
 
@@ -137,18 +167,18 @@ gwd = HiscoreBossGroup(
 #     ],
 # )
 
-# raids = HiscoreBossGroup(
-#     name="Raids",
-#     url="https://oldschool.runescape.wiki/images/Verzik_Vitur_%28final_form%29.png?f9733",
-#     bosses=[
-#         wom.Bosses.ChambersOfXeric,
-#         wom.Bosses.ChambersOfXericChallenge,
-#         wom.Bosses.TheatreOfBlood,
-#         wom.Bosses.TheatreOfBloodHard,
-#         wom.Bosses.TombsOfAmascut,
-#         wom.Bosses.TombsOfAmascutExpert,
-#     ],
-# )
+raids = HiscoreBossGroup(
+    name="Raids",
+    url="https://oldschool.runescape.wiki/images/Verzik_Vitur_%28final_form%29.png?f9733",
+    bosses=[
+        wom.Metric.ChambersOfXeric,
+        wom.Metric.ChambersOfXericChallenge,
+        wom.Metric.TheatreOfBlood,
+        wom.Metric.TheatreOfBloodHard,
+        wom.Metric.TombsOfAmascut,
+        wom.Metric.TombsOfAmascutExpert,
+    ],
+)
 
 # money_bosses = HiscoreBossGroup(
 #     name="Money Bosses",
@@ -228,9 +258,9 @@ gwd = HiscoreBossGroup(
 
 all_boss_groups = [
     gwd,
+    raids,
     # wilderness,
     # slayer,
-    # raids,
     # money_bosses,
     # tzhaar,
     # gauntlet,

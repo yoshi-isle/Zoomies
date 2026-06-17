@@ -24,7 +24,28 @@ class Embeds:
 
         return embed
     
-    def highest_kcs():
-        embed = discord.Embed(title="Highest KCs",
+    def highest_kcs(data, category_name):
+        embed = discord.Embed(title=category_name,
                             colour=0xfe86e4)
+        
+        for key in data:
+            print("Generating", key)
+            embed.add_field(name=get_clean_name(key), value=f"> {data[key]['normie']['name']} - {data[key]['normie']['kills']} KC\n> <:ironman:1516279477657800724> {data[key]['iron']['name']} - {data[key]['iron']['kills']} KC", inline = False)
+
         return embed
+    
+def get_clean_name(boss_name: str):
+    clean_names = {
+        "commander_zilyana": "Commander Zilyana",
+        "general_graardor": "General Graardor",
+        "kril_tsutsaroth": "K'ril Tsutsaroth",
+        "kreearra": "Kree'arra",
+        "nex": "Nex",
+        "chambers_of_xeric": "Chambers of Xeric",
+        "chambers_of_xeric_challenge_mode": "Chambers of Xeric: CM",
+        "theatre_of_blood": "Theatre of Blood",
+        "theatre_of_blood_hard_mode": "Theatre of Blood: HM",
+        "tombs_of_amascut": "Tombs of Amascut",
+        "tombs_of_amascut_expert": "Tombs of Amascut: XM"
+    }
+    return clean_names[boss_name]

@@ -11,13 +11,10 @@ load_dotenv()
 
 class Bot(commands.Bot):
     def __init__(self):
-        super().__init__(
-            command_prefix="!",
-            intents=discord.Intents.all()
-        )
-        
+        super().__init__(command_prefix="!", intents=discord.Intents.all())
+
         init_db()
-        
+
         self.SessionLocal = SessionLocal
         self.Activity = Activity
         self.Submission = Submission

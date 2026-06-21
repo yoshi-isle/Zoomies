@@ -8,6 +8,7 @@ from typing import List
 from database import get_db
 from models import Activity
 
+
 class SubmissionCog(commands.Cog):
     def __init__(self, bot: commands.Bot, logger: logging.Logger | None = None):
         self.bot = bot
@@ -19,8 +20,10 @@ class SubmissionCog(commands.Cog):
         self,
         interaction: discord.Interaction,
     ):
-        
-        await interaction.response.send_message(f"pong {interaction.user.mention}!", ephemeral=True)
+
+        await interaction.response.send_message(
+            f"pong {interaction.user.mention}!", ephemeral=True
+        )
 
     async def activity_autocomplete(
         self,
@@ -34,7 +37,9 @@ class SubmissionCog(commands.Cog):
                 query = query.filter(Activity.activity_name.ilike(f"%{current}%"))
             activities = query.order_by(Activity.activity_name).limit(25).all()
             return [
-                app_commands.Choice(name=activity.activity_name, value=activity.activity_name)
+                app_commands.Choice(
+                    name=activity.activity_name, value=activity.activity_name
+                )
                 for activity in activities
             ]
         finally:
@@ -53,16 +58,22 @@ class SubmissionCog(commands.Cog):
             ephemeral=True,
         )
 
-    @app_commands.command(name="list_activities", description="Show all activities stored in the database")
+    @app_commands.command(
+        name="list_activities", description="Show all activities stored in the database"
+    )
     async def list_activities(self, interaction: discord.Interaction):
         db: Session = next(get_db())
         try:
             all_activities = db.query(Activity).order_by(Activity.activity_name).all()
             if not all_activities:
-                await interaction.response.send_message("No activities found in the database.", ephemeral=True)
+                await interaction.response.send_message(
+                    "No activities found in the database.", ephemeral=True
+                )
                 return
 
-            activity_text = "\n".join(f"- {activity.activity_name}" for activity in all_activities)
+            activity_text = "\n".join(
+                f"- {activity.activity_name}" for activity in all_activities
+            )
             if len(activity_text) > 1900:
                 activity_text = activity_text[:1900] + "\n...and more"
 
@@ -72,6 +83,7 @@ class SubmissionCog(commands.Cog):
             )
         finally:
             db.close()
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(SubmissionCog(bot))

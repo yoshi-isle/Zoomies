@@ -17,7 +17,7 @@ class Embeds:
                         value="<:1stplace:1514784685295927435> w1zzy, SithLordMeow, dnd5, ZaryteKnight, Pattaya\n",
                         inline=False)
         embed.add_field(name="<:ghrazi_rapier:1514810083278852126> Chapter IV (Theatre of Blood)",
-                        value="(Ongoing)",
+                        value="N/A\n",
                         inline=False)
 
         embed.set_thumbnail(url="https://i.imgur.com/8GI8n4g.png")

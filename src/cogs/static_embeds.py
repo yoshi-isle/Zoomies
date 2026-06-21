@@ -15,7 +15,6 @@ class StaticEmbedCog(commands.Cog):
         self,
         interaction: discord.Interaction,
     ):
-
         await interaction.channel.send(embed=Embeds.the_hunt_winners())
         await interaction.response.send_message(f"Displayed the hunt winners, {interaction.user.mention}!", ephemeral=True)
 

@@ -19,19 +19,11 @@ class HighestKillcountCog(commands.Cog):
         interaction: discord.Interaction,
         category: int = 1
     ):
-        
         await interaction.response.defer(thinking=True)
         wom = WiseOldManClient()
         await wom._connect()
         data = {}
-        
-        print("1")
-
         group = all_boss_groups[category-1]
-
-
-        print("2")
-        print(group)
         for boss in group.bosses:
             if category == 1:
                 metric = boss

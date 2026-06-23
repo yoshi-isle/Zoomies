@@ -34,10 +34,16 @@ class Embeds:
         embed = discord.Embed(title=category_name, colour=0xFE86E4)
 
         for key in data:
-            print("Generating", key)
+            # convert to comma format 1234 = 1,234
+            player_normie = data[key]['normie']['name']
+            player_iron = data[key]['iron']['name']
+            metric_normie = data[key]['normie']['kills']
+            metric_iron = data[key]['iron']['kills']
+            terminology = data[key]['normie']['terminology']
+
             embed.add_field(
                 name=get_clean_name(key),
-                value=f"> {data[key]['normie']['name']} - {data[key]['normie']['kills']} KC\n> <:ironman:1516279477657800724> {data[key]['iron']['name']} - {data[key]['iron']['kills']} KC",
+                value=f"> {player_normie} - {metric_normie:,} {terminology}\n> <:ironman:1516279477657800724> {player_iron} - {metric_iron:,} {terminology}",
                 inline=False,
             )
 
@@ -45,8 +51,6 @@ class Embeds:
 
 
 def get_clean_name(boss_name) -> str:
-    print(boss_name)
-    print(boss_name.name)
     clean_name = str(boss_name.name)
     # Add a space between each uppercase letter
     for i in range(len(clean_name) - 1, 0, -1):

@@ -38,11 +38,11 @@ class WiseOldManClient:
     async def get_top_placements_hiscores(
         self,
         metric: wom.Metric,
-        group_id: int = int(os.getenv("WOM_GROUP_ID")),
+        group_id: int = os.getenv("WOM_GROUP_ID"),
         number_of_ranks: int = 30,
         placements: int = 1,
     ) -> Tuple[List[wom.Player], List[wom.Player]]:
-
+        
         result = await self.client.groups.get_hiscores(
             id=group_id, metric=metric, limit=number_of_ranks
         )

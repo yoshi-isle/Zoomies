@@ -14,9 +14,20 @@ class HighestKillcountCog(commands.Cog):
         self.logger.info("Static embed cog initialized")
 
     @app_commands.command(
-        name="post_highest_kcs",
-        description="Displays highest killcount embeds from scratch",
+    name="post_highest_kcs",
+    description="Displays highest killcount embeds from scratch",
     )
+    @app_commands.choices(category=[
+        app_commands.Choice(name="God Wars Dungeon", value=0),
+        app_commands.Choice(name="Wilderness", value=1),
+        app_commands.Choice(name="Raids", value=2),
+        app_commands.Choice(name="Slayer", value=3),
+        app_commands.Choice(name="Money Bosses", value=4),
+        app_commands.Choice(name="Other", value=5),
+        app_commands.Choice(name="Trial Content", value=6),
+        app_commands.Choice(name="Desert Treasure 2", value=7),
+        app_commands.Choice(name="Misc Activities", value=8),
+    ])
     async def post_highest_kcs(self, interaction: discord.Interaction, category: int):
         try:
             if category < 0 or category > len(all_boss_groups) - 1:
@@ -40,51 +51,30 @@ class HighestKillcountCog(commands.Cog):
 
                     def extract_value(obj):
                         if hasattr(obj.data, "kills"):
-                            return obj.data.kills
-                        elif hasattr(obj.data, "count"):
-                            return obj.data.count
-                        return 0  # or raise an error / log it
+                            return obj.data.kills, "KC"
+                        elif hasattr(obj.data, "score"):
+                            return obj.data.score, "KC"
+                        elif hasattr(obj.data, "experience"):
+                            return obj.data.experience, "XP"
+                        return 0, "ERROR"
+                    
+
+                    main_amount, _ = extract_value(normies[0])
+                    iron_amount, terminology = extract_value(irons[0])
 
                     data[boss] = {
                         "normie": {
                             "name": normies[0].player.username,
-                            "kills": extract_value(normies[0]),
+                            "kills": main_amount,
+                            "terminology": terminology,
                         },
                         "iron": {
                             "name": irons[0].player.username,
-                            "kills": extract_value(irons[0]),
+                            "kills": iron_amount,
+                            "terminology": terminology,
                         },
                     }
 
-                    def get_score(data):
-                        """Safely extract and convert the relevant score/kills/level value to int."""
-                        if hasattr(data, "kills"):
-                            value = data.kills
-                        elif hasattr(data, "score"):
-                            value = data.score
-                        elif hasattr(data, "count"):
-                            value = data.count
-                        elif hasattr(data, "experience"):
-                            value = data.experience
-                        elif hasattr(data, "level"):
-                            value = data.level
-                        else:
-                            value = 0
-                        try:
-                            return int(float(value)) if value is not None else 0
-                        except (TypeError, ValueError):
-                            return 0
-
-                    data[boss] = {
-                        "normie": {
-                            "name": normies[0].player.username,
-                            "kills": extract_value(normies[0]),
-                        },
-                        "iron": {
-                            "name": irons[0].player.username,
-                            "kills": extract_value(irons[0]),
-                        },
-                    }
             except Exception as e:
                 print("Failed section, skipping it", e)
 

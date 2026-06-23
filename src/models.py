@@ -24,10 +24,12 @@ class Submission(Base):
     __tablename__ = "submission"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    activity: Mapped[int] = mapped_column(Integer, nullable=False)
     create_time: Mapped[date] = mapped_column(Date, nullable=False)
     players: Mapped[str] = mapped_column(String(250), nullable=False)
     metric: Mapped[int] = mapped_column(BigInteger, nullable=False)
     imgur_url: Mapped[str] = mapped_column(String(50), nullable=True)
+    is_approved: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     def __repr__(self):
         return f"<Submission(id={self.id}, metric={self.metric})>"

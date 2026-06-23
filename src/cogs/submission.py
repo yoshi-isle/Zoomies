@@ -9,7 +9,7 @@ from database import get_db
 from models import Activity
 import sys
 from pathlib import Path
-from services import time_service
+from services import time_service, pb_service
 
 # Get sibling dependencies
 project_root = Path(__file__).resolve().parent
@@ -65,16 +65,35 @@ class SubmissionCog(commands.Cog):
             await interaction.response.send_message("Error", e)
 
         if activity_record.is_time_based:
-            # Check if the input is a valid time format MM:ss.ms
-            if not time_service.is_valid_time_format(metric):
+            is_valid, int_metric = time_service.is_valid_time_format(metric)
+
+            if not is_valid:
                 await interaction.response.send_message(
-                    "Invalid time format. Please use MM:ss.ms format.", ephemeral=True
+                    "Invalid time format. Please use MM:ss.ms format and make sure the time is realistic (divisible by 0.6).",
+                    ephemeral=True,
+                )
+                return
+        else:
+            try:
+                int_metric = int(metric)
+                if int_metric < 0:
+                    raise ValueError("Metric must be a non-negative integer.")
+            except ValueError:
+                await interaction.response.send_message(
+                    "Invalid metric. Please provide a non-negative integer.",
+                    ephemeral=True,
                 )
                 return
 
         await interaction.response.send_message(
-            f"This metric is {activity_record.is_time_based}",
+            "Your submission is valid and ready",
             ephemeral=True,
+        )
+
+        pb_service.create_pb_submission(
+            metric=int_metric,
+            activity=activity,
+            players_string="Test, 123",
         )
 
     @app_commands.command(
@@ -93,8 +112,6 @@ class SubmissionCog(commands.Cog):
             activity_text = "\n".join(
                 f"- {activity.activity_name}" for activity in all_activities
             )
-            if len(activity_text) > 1900:
-                activity_text = activity_text[:1900] + "\n...and more"
 
             await interaction.response.send_message(
                 f"Available activities:\n{activity_text}",

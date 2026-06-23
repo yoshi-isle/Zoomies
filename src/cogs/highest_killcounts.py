@@ -1,10 +1,19 @@
+from datetime import datetime
 import logging
+import os
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import app_commands
-from embeds import Embeds
-from cogs.constants.highscore_boss_group import HiscoreBossGroup, all_boss_groups
-from cogs.services.wom_client import WiseOldManClient
+from sqlalchemy.orm import Session
+from database import get_db
+from models import HighestKCReprocess
+from services import highest_kc_service
+import sys
+from pathlib import Path
+
+# Get sibling dependencies
+project_root = Path(__file__).resolve().parent
+sys.path.insert(0, str(project_root))
 
 
 class HighestKillcountCog(commands.Cog):
@@ -12,21 +21,46 @@ class HighestKillcountCog(commands.Cog):
         self.bot = bot
         self.logger = logger or logging.getLogger(__name__)
         self.logger.info("Static embed cog initialized")
+        self.check_category_needs_updating.start()
 
-    @app_commands.command(
-        name="build_table_of_contents",
-        description="Displays highest killcount embeds from scratch",
-        link1="",
-        link2="",
-        link3="",
-        link4="",
-        link5="",
-        link6="",
-        link7="",
-        link8="",
-    )
-    async def build_table_of_contents():
-        pass
+    @tasks.loop(seconds=4)
+    async def check_category_needs_updating(self):
+        print("Checking if any categories need updating...")
+        db: Session = next(get_db())
+        highest_kc_reprocess = (
+            db.query(HighestKCReprocess)
+            .filter(HighestKCReprocess.next_update < datetime.now())
+            .first()
+        )
+        if highest_kc_reprocess:
+            print(
+                f"Found category that needs updating: {highest_kc_reprocess.category}, message: {highest_kc_reprocess.discord_message_id}"
+            )
+            # Get the message thread by ID
+
+            channel = await self.bot.fetch_channel(os.getenv("HIGHEST_KC_CHANNEL"))
+            print(channel)
+            if not channel:
+                print("Could not find channel!")
+                return
+
+            message = await channel.fetch_message(
+                highest_kc_reprocess.discord_message_id
+            )
+
+            new_embed: discord.Embed = await highest_kc_service.build_highest_kcs_embed(
+                highest_kc_reprocess.category
+            )
+            print(new_embed.fields)
+            # Edit the message with new data
+            await message.edit(embed=new_embed)
+            highest_kc_service.update_reprocess_record(
+                message, highest_kc_reprocess.category
+            )
+
+        else:
+            print("All clear!")
+        db.commit()
 
     @app_commands.command(
         name="post_highest_kcs",
@@ -46,58 +80,21 @@ class HighestKillcountCog(commands.Cog):
         ]
     )
     async def post_highest_kcs(self, interaction: discord.Interaction, category: int):
+
+        # ------- Build the Highest KCs embed -------
         try:
-            if category < 0 or category > len(all_boss_groups) - 1:
-                await interaction.response.send_message(
-                    f"Invalid category. Please choose a number between 0 and {len(all_boss_groups) - 1}.",
-                    ephemeral=True,
-                )
-                return
-
-            wom_client = WiseOldManClient()
-            await wom_client._connect()
-            data = {}
-            group: HiscoreBossGroup = all_boss_groups[category]
-
-            try:
-                for boss in group.bosses:
-                    normies, irons = await wom_client.get_top_placements_hiscores(
-                        metric=boss
-                    )
-
-                    def extract_value(obj):
-                        if hasattr(obj.data, "kills"):
-                            return obj.data.kills, "KC"
-                        elif hasattr(obj.data, "score"):
-                            return obj.data.score, "KC"
-                        elif hasattr(obj.data, "experience"):
-                            return obj.data.experience, "XP"
-                        return 0, "ERROR"
-
-                    main_amount, _ = extract_value(normies[0])
-                    iron_amount, terminology = extract_value(irons[0])
-
-                    data[boss] = {
-                        "emote": group.emotes[group.bosses.index(boss)],
-                        "normie": {
-                            "name": normies[0].player.username,
-                            "kills": main_amount,
-                            "terminology": terminology,
-                        },
-                        "iron": {
-                            "name": irons[0].player.username,
-                            "kills": iron_amount,
-                            "terminology": terminology,
-                        },
-                    }
-
-            except Exception as e:
-                print("Failed section, skipping it", e)
-
-            await interaction.channel.send(embed=Embeds.highest_kcs(data, group.name))
+            highest_kcs_embed = await highest_kc_service.build_highest_kcs_embed(
+                category
+            )
+            message = await interaction.channel.send(embed=highest_kcs_embed)
 
         except Exception as e:
-            await interaction.response.send_message(e)
+            await interaction.response.send_message(
+                "Error building the highest kcs embed", e, ephemeral=True
+            )
+
+        # ------- Insert the record into the reprocess table -------
+        highest_kc_service.insert_reprocess_record(message, category)
 
 
 async def setup(bot: commands.Bot):

@@ -8,12 +8,6 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import HighestKCReprocess
 from services import highest_kc_service
-import sys
-from pathlib import Path
-
-# Get sibling dependencies
-project_root = Path(__file__).resolve().parent
-sys.path.insert(0, str(project_root))
 
 
 class HighestKillcountCog(commands.Cog):
@@ -23,7 +17,7 @@ class HighestKillcountCog(commands.Cog):
         self.logger.info("Static embed cog initialized")
         self.check_category_needs_updating.start()
 
-    @tasks.loop(seconds=4)
+    @tasks.loop(minutes=30)
     async def check_category_needs_updating(self):
         print("Checking if any categories need updating...")
         db: Session = next(get_db())
@@ -37,7 +31,6 @@ class HighestKillcountCog(commands.Cog):
                 f"Found category that needs updating: {highest_kc_reprocess.category}, message: {highest_kc_reprocess.discord_message_id}"
             )
             # Get the message thread by ID
-
             channel = await self.bot.fetch_channel(os.getenv("HIGHEST_KC_CHANNEL"))
             print(channel)
             if not channel:

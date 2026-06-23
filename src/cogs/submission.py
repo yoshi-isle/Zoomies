@@ -7,6 +7,13 @@ from typing import List
 
 from database import get_db
 from models import Activity
+import sys
+from pathlib import Path
+from services import time_service
+
+# Get sibling dependencies
+project_root = Path(__file__).resolve().parent
+sys.path.insert(0, str(project_root))
 
 
 class SubmissionCog(commands.Cog):
@@ -14,16 +21,6 @@ class SubmissionCog(commands.Cog):
         self.bot = bot
         self.logger = logger or logging.getLogger(__name__)
         self.logger.info("Submission cog initialized")
-
-    @app_commands.command(name="ping", description="ping")
-    async def ping(
-        self,
-        interaction: discord.Interaction,
-    ):
-
-        await interaction.response.send_message(
-            f"pong {interaction.user.mention}!", ephemeral=True
-        )
 
     async def activity_autocomplete(
         self,
@@ -49,12 +46,34 @@ class SubmissionCog(commands.Cog):
     @app_commands.describe(activity="Choose the activity to submit a PB for")
     @app_commands.autocomplete(activity=activity_autocomplete)
     async def submit_a_pb(
-        self,
-        interaction: discord.Interaction,
-        activity: str,
+        self, interaction: discord.Interaction, activity: str, metric: str
     ):
+        # Get the activity from the db
+        db: Session = next(get_db())
+        try:
+            activity_record = (
+                db.query(Activity)
+                .filter(Activity.activity_name.ilike(activity))
+                .first()
+            )
+            if not activity_record:
+                await interaction.response.send_message(
+                    f"Activity '{activity}' not found in the database.", ephemeral=True
+                )
+                return
+        except Exception as e:
+            await interaction.response.send_message("Error", e)
+
+        if activity_record.is_time_based:
+            # Check if the input is a valid time format MM:ss.ms
+            if not time_service.is_valid_time_format(metric):
+                await interaction.response.send_message(
+                    "Invalid time format. Please use MM:ss.ms format.", ephemeral=True
+                )
+                return
+
         await interaction.response.send_message(
-            f"Submitting: **{activity}**",
+            f"This metric is {activity_record.is_time_based}",
             ephemeral=True,
         )
 

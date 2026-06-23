@@ -15,7 +15,7 @@ project_root = Path(__file__).resolve().parent
 sys.path.insert(0, str(project_root))
 
 
-def update_reprocess_record(discord_message_id: int, category: int):
+def update_reprocess_record(discord_message_id: int):
     """
     Helper method that updates the reprocess record's timestamp
     """
@@ -29,7 +29,9 @@ def update_reprocess_record(discord_message_id: int, category: int):
     db.commit()
 
 
-def insert_reprocess_record(discord_message_id: int, category: int):
+def insert_reprocess_record(
+    discord_message_id: int, category: int, top_main: str = "", top_iron: str = ""
+):
     """
     Helper method that inserts the reprocess record
     """
@@ -38,6 +40,8 @@ def insert_reprocess_record(discord_message_id: int, category: int):
         discord_message_id=discord_message_id.id,
         category=category,
         next_update=datetime.now() + timedelta(hours=6),
+        top_main=top_main,
+        top_iron=top_iron,
     )
     db.add(highest_kc_reprocess)
     db.commit()

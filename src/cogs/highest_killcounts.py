@@ -37,7 +37,6 @@ class HighestKillcountCog(commands.Cog):
                 )
                 return
 
-            await interaction.response.defer()
             wom_client = WiseOldManClient()
             await wom_client._connect()
             data = {}
@@ -63,6 +62,7 @@ class HighestKillcountCog(commands.Cog):
                     iron_amount, terminology = extract_value(irons[0])
 
                     data[boss] = {
+                        "emote": group.emotes[group.bosses.index(boss)],
                         "normie": {
                             "name": normies[0].player.username,
                             "kills": main_amount,
@@ -78,7 +78,7 @@ class HighestKillcountCog(commands.Cog):
             except Exception as e:
                 print("Failed section, skipping it", e)
 
-            await interaction.followup.send(embed=Embeds.highest_kcs(data, group.name))
+            await interaction.channel.send(embed=Embeds.highest_kcs(data, group.name))
 
         except Exception as e:
             await interaction.response.send_message(e)

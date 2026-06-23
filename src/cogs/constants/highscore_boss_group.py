@@ -2,10 +2,11 @@ import wom
 
 
 class HiscoreBossGroup:
-    def __init__(self, name, url, bosses):
+    def __init__(self, name, url, bosses, emotes = []):
         self.name = name
         self.url = url
         self.bosses = bosses
+        self.emotes = emotes
 
 
 all_boss_groups = [
@@ -19,6 +20,13 @@ all_boss_groups = [
             wom.Metric.Kreearra,
             wom.Metric.Nex,
         ],
+        emotes=[
+            "<:Pet_zilyana:1518771954176364615>",
+            "<:Pet_general_graardor:1518771953262133369>",
+            "<:Pet_kril_tsutsaroth:1518771952557232158>",
+            "<:Pet_kreearra:1518771951915634802>",
+            "<:Nexling:1518771950753943754>" 
+        ]
     ),
     HiscoreBossGroup(
         name="Wilderness",
@@ -37,6 +45,20 @@ all_boss_groups = [
             wom.Metric.KingBlackDragon,
             wom.Metric.CorporealBeast,
         ],
+        emotes=[
+            "<:Ancient_staff:1518774330660749443>",
+            "<:Fedora:1518774330064896020>",
+            "<:Callisto_cub:1518774329519636681>",
+            "<:Callisto_cub_legacy:1518774328978702498>",
+            "<:Vetion_jr:1518774327711895625>",
+            "<:vetion:1518774764359909427>",
+            "<:Venenatis_spiderling:1518774326281895997>",
+            "<:Venenatis_spiderling_legacy:1518774325896024105>",
+            "<:Scorpias_offspring:1518774325228994621>",
+            "<:Pet_chaos_elemental:1518774324230881420>",
+            "<:Prince_black_dragon:1518774323417055242>",
+            "<:Pet_corporeal_critter:1518774322645307483>"
+        ]
     ),
     HiscoreBossGroup(
         name="Raids",
@@ -49,6 +71,14 @@ all_boss_groups = [
             wom.Metric.TombsOfAmascut,
             wom.Metric.TombsOfAmascutExpert,
         ],
+        emotes=[
+            "<:Olmlet:1518776596260192286>",
+            "<:cms:1491882178731311235>",
+            "<:Lil_zik:1518776594733207736>",
+            "<:hmt:1518776593080647710>",
+            "<:150toa:1518776591671361617>",
+            "<:300toa:1518776590673117254>"
+        ]
     ),
     HiscoreBossGroup(
         name="Slayer",
@@ -67,6 +97,20 @@ all_boss_groups = [
             wom.Metric.Araxxor,
             wom.Metric.ShellbaneGryphon,
         ],
+        emotes=[
+            "<:Pet_dagannoth_supreme:1518777551844151327>",
+            "<:Pet_dagannoth_prime:1518777550611157023>",
+            "<:Pet_dagannoth_rex:1518777550053048330>",
+            "<:Skotos:1518777548971049020>",
+            "<:Pet_kraken:1518777548392239254>",
+            "<:Abyssal_orphan:1518777547440263340>",
+            "<:Midnight:1518777546471112825>",
+            "<:Pet_smoke_devil:1518777545527656458>",
+            "<:Hellpuppy:1518777544789463172>",
+            "<:Ikkle_hydra_fire:1518777544269103280>",
+            "<:Nid:1518777543514132491>",
+            "<:Gulliver:1518777542301974652>",   
+        ]
     ),
     HiscoreBossGroup(
         name="Money Bosses",
@@ -80,6 +124,15 @@ all_boss_groups = [
             wom.Metric.TheGauntlet,
             wom.Metric.TheCorruptedGauntlet,
         ],
+        emotes=[
+            "<:Pet_snakeling:1518778150610272316>",
+            "<:Vorki:1518778149960155367>",
+            "<:Muphin_ranged:1518778148563456000>",
+            "<:Little_nightmare:1518778147779379350>",
+            "<:Little_parasite:1518778146869084321>",
+            "<:Youngllef:1518778146428551238>",
+            "<:Corrupted_youngllef:1518778145803735196>",
+        ]
     ),
     HiscoreBossGroup(
         name="Other",
@@ -102,6 +155,24 @@ all_boss_groups = [
             wom.Metric.Brutus,
             wom.Metric.DoomOfMokhaiotl,
         ],
+        emotes = [
+            "<:Dharoks_helm:1518779253947105311>",
+            "<:Eclipse_atlatl:1518779253183742053>",
+            "<:Baby_mole:1518779251774586964>",
+            "<:Steel_ring:1518779250281283635>",
+            "<:Sraracha:1518779249262071918>",
+            "<:Kalphite_princess_2nd_form:1518779248679063572>",
+            "<:Hill_giant_club:1518779247609512066>",
+            "<:Bryophytas_essence:1518779246829637692>",
+            "<:Mimic:1518779246149894324>",
+            "<:Seed_pack:1518779245063569491>",
+            "<:Smolcano:1518779243272605706>",
+            "<:Bran:1518779242014572645>",
+            "<:Yami:1518779241079242822>",
+            "<:Moxi:1518779240252702900>",
+            "<:Beef:1518779239330218095>",
+            "<:Dom:1518779238495555676>",
+        ]
     ),
     HiscoreBossGroup(
         name="Trial Content",
@@ -112,6 +183,12 @@ all_boss_groups = [
             wom.Metric.SolHeredit,
             wom.Metric.ColosseumGlory,
         ],
+        emotes=[
+            "<:Tzrekjad:1518780664332419224>",
+            "<:Tzrekzuk:1518780663682039859>",
+            "<:Smol_heredit:1518780662654435419>",
+            "<:glory:1518780661987672234>"
+        ]
     ),
     HiscoreBossGroup(
         name="Desert Treasure 2",
@@ -122,6 +199,12 @@ all_boss_groups = [
             wom.Metric.Vardorvis,
             wom.Metric.TheWhisperer,
         ],
+        emotes=[
+            "<:Baron:1518781036081709106>",
+            "<:Lilviathan:1518781035163287813>",
+            "<:Butch:1518781033104015605>",
+            "<:Wisp:1518781031887405248>"
+        ]
     ),
     HiscoreBossGroup(
         name="Misc Activities",
@@ -130,12 +213,21 @@ all_boss_groups = [
             wom.Metric.ClueScrollsAll,
             wom.Metric.Tempoross,
             wom.Metric.GuardiansOfTheRift,
-            wom.Metric.BountyHunterHunter,
             wom.Metric.LastManStanding,
             wom.Metric.CollectionsLogged,
             wom.Metric.Overall,
             wom.Metric.Ehb,
             wom.Metric.Ehp,
         ],
+        emotes=[
+            "<:Clue_scroll_master:1518781972590235698>",
+            "<:Tiny_tempor:1518781971822805093>",
+            "<:Abyssal_protector:1518781970597806120>",
+            "<:Victors_cape_1000:1518781969662607450>",
+            "<:Collection_log_gilded:1518781968706306180>",
+            "<:Stats_icon:1518781967485763584>",
+            "<:ehp:1518781966697238679>",
+            "<:ehb:1518781965132628232>",
+        ]
     ),
 ]

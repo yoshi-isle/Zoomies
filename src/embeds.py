@@ -35,19 +35,22 @@ class Embeds:
 
         for key in data:
             # convert to comma format 1234 = 1,234
-            player_normie = data[key]['normie']['name']
-            player_iron = data[key]['iron']['name']
-            metric_normie = data[key]['normie']['kills']
-            metric_iron = data[key]['iron']['kills']
-            terminology = data[key]['normie']['terminology']
+            player_normie = data[key]["normie"]["name"]
+            player_iron = data[key]["iron"]["name"]
+            metric_normie = data[key]["normie"]["kills"]
+            metric_iron = data[key]["iron"]["kills"]
+            terminology = data[key]["normie"]["terminology"]
 
             embed.add_field(
                 name=f"{get_clean_name(key)} {data[key]['emote']}",
                 value=f"> {player_normie} - {metric_normie:,} {terminology}\n> <:ironman:1516279477657800724> {player_iron} - {metric_iron:,} {terminology}",
                 inline=False,
             )
-        
-        embed.add_field(name="", value="Last updated: " + discord.utils.format_dt(discord.utils.utcnow()))
+
+        embed.add_field(
+            name="",
+            value="Last updated: " + discord.utils.format_dt(discord.utils.utcnow()),
+        )
 
         return embed
 

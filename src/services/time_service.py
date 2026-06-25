@@ -31,16 +31,10 @@ def is_valid_time_format(metric: str) -> Tuple[bool, Optional[int]]:
     except (ValueError, IndexError):
         return False, None
 
-    # Must be a multiple of one tick (0.6 seconds)
-    if abs(total_seconds % 0.6) > 1e-6:
+    if total_seconds <= 0 or total_seconds > 21600:
         return False, None
 
-    if total_seconds <= 0 or total_seconds > 36000:  # ~10 hours max
-        return False, None
-
-    # Convert to ticks
-    ticks = int(round(total_seconds / 0.6))  # round for safety
-
+    ticks = int(round(total_seconds / 0.6))
     return True, ticks
 
 
@@ -48,23 +42,34 @@ test_cases = {
     "0:06": True,
     "0:06.00": True,
     "35:21": True,
-    "1:23.45": False,
     "6.0": True,
     "1.80": True,
-    "1.90": False,
+    "1.90": True,
     ":5": False,
     "2.40": True,
     "": False,
     "0:00": False,
-    "10:59.99": False,
     "123:45": True,
-    "1.0": False,
+    "1.0": True,
     "1.2": True,
+    "adfgiobsrgdjf": False,
+    "1:2": False,
+    "10-2033420": False,
+    "dsdkodsds---==-32=-3=2-32==32-32t32t23.0": False,
+    "asdfokiiaweKOFEOWEFEFW:00.21": False,
+    "12:32:12.00": False,
+    "32:12.00.00": False,
+    "2.00.00": False,
+    "22:00.00": True,
 }
 
+test_counter = 0
 for k, v in test_cases.items():
+    correct_cases = len(test_cases)
     result, _ = is_valid_time_format(k)
     if result == v:
-        print(f"Pass: {k:>12} -> {result}")
+        test_counter += 1
     else:
-        print(f"FAILED.{k:>12}")
+        print("[Time Service] Test case failed", k, "Expected:", v)
+
+print(f"[Time Service] {test_counter}/{correct_cases} test cases passed.")

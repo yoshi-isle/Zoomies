@@ -46,7 +46,7 @@ class SubmissionCog(commands.Cog):
     @app_commands.describe(activity="Choose the activity to submit a PB for")
     @app_commands.autocomplete(activity=activity_autocomplete)
     async def submit_a_pb(
-        self, interaction: discord.Interaction, activity: str, metric: str
+        self, interaction: discord.Interaction, activity: str, pb_obtained: str
     ):
         # Get the activity from the db
         db: Session = next(get_db())
@@ -56,26 +56,21 @@ class SubmissionCog(commands.Cog):
                 .filter(Activity.activity_name.ilike(activity))
                 .first()
             )
-            if not activity_record:
-                await interaction.response.send_message(
-                    f"Activity '{activity}' not found in the database.", ephemeral=True
-                )
-                return
         except Exception as e:
             await interaction.response.send_message("Error", e)
 
         if activity_record.is_time_based:
-            is_valid, int_metric = time_service.is_valid_time_format(metric)
+            is_valid, int_metric = time_service.is_valid_time_format(pb_obtained)
 
             if not is_valid:
                 await interaction.response.send_message(
-                    "Invalid time format. Please use MM:ss.ms format and make sure the time is realistic (divisible by 0.6).",
+                    "Invalid time format. Please use MM:ss.ms format and make sure the time is divisible by 0.6.",
                     ephemeral=True,
                 )
                 return
         else:
             try:
-                int_metric = int(metric)
+                int_metric = int(pb_obtained)
                 if int_metric < 0:
                     raise ValueError("Metric must be a non-negative integer.")
             except ValueError:

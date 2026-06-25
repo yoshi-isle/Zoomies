@@ -47,9 +47,7 @@ class HighestKillcountCog(commands.Cog):
             print(new_embed.fields)
             # Edit the message with new data
             await message.edit(embed=new_embed)
-            highest_kc_service.update_reprocess_record(
-                message, highest_kc_reprocess.category
-            )
+            highest_kc_service.update_reprocess_record(message)
 
         else:
             print("All clear!")

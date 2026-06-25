@@ -14,7 +14,7 @@ def create_pb_submission(metric: str, activity: str, players_string: str):
         db.query(Activity).filter(Activity.activity_name == activity).first()
     )
 
-    # insert to submission table
+    # Insert to submission table
     submission = Submission(
         metric=metric,
         activity=activity_record.id if activity_record else None,

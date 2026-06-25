@@ -31,7 +31,8 @@ def update_reprocess_record(discord_message_id: int):
 
 
 def insert_reprocess_record(
-    discord_message_id: int, category: int, top_main: str = "", top_iron: str = ""
+    discord_message_id: int,
+    category: int,
 ):
     """
     Helper method that inserts the reprocess record
@@ -41,8 +42,6 @@ def insert_reprocess_record(
         discord_message_id=discord_message_id.id,
         category=category,
         next_update=datetime.now() + timedelta(hours=6),
-        top_main=top_main,
-        top_iron=top_iron,
     )
     db.add(highest_kc_reprocess)
     db.commit()
@@ -92,8 +91,6 @@ async def build_highest_kcs_embed(category: int):
 
     except Exception as e:
         print("Failed section, skipping it", e)
-    finally:
-        wom_client.close()
 
     embed = Embeds.highest_kcs(data, group.name)
     return embed

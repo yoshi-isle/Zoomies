@@ -14,3 +14,4 @@ dependencies:
     - alembic
     - psycopg2-binary
     - wom.py
+    - pyimgur

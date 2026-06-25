@@ -28,3 +28,4 @@ def create_pb_submission(metric: str, activity: str, players_string: str):
     db.commit()
     db.refresh(submission)
     db.close()
+    return submission.id

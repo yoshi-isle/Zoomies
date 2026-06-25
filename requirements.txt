@@ -6,3 +6,4 @@ sqlalchemy>=2.0.0
 alembic
 psycopg2-binary
 wom.py
+pyimgur

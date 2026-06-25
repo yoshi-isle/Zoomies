@@ -1,15 +1,16 @@
 import logging
+import os
 import discord
 from discord.ext import commands
-from discord import app_commands
+from discord import Embed, app_commands
 from sqlalchemy.orm import Session
 from typing import List
-
 from database import get_db
 from models import Activity
 import sys
 from pathlib import Path
 from services import time_service, pb_service
+import pyimgur
 
 # Get sibling dependencies
 project_root = Path(__file__).resolve().parent
@@ -46,7 +47,11 @@ class SubmissionCog(commands.Cog):
     @app_commands.describe(activity="Choose the activity to submit a PB for")
     @app_commands.autocomplete(activity=activity_autocomplete)
     async def submit_a_pb(
-        self, interaction: discord.Interaction, activity: str, pb_obtained: str
+        self,
+        interaction: discord.Interaction,
+        activity: str,
+        pb_obtained: str,
+        image: discord.Attachment | None = None,
     ):
         # Get the activity from the db
         db: Session = next(get_db())
@@ -85,11 +90,58 @@ class SubmissionCog(commands.Cog):
             ephemeral=True,
         )
 
-        pb_service.create_pb_submission(
+        if image:
+            if not image.content_type.startswith("image/"):
+                await interaction.response.send_message(
+                    "Invalid image type. Please upload a valid image.", ephemeral=True
+                )
+                return
+
+            imgur_client = pyimgur.Imgur(os.getenv("IMGUR_CLIENT_ID"))
+            test = imgur_client.upload_image(
+                url=image.url,
+                title=f"PB Submission for {activity} by {interaction.user.name}",
+            )
+            imgur_link = test.link
+
+        id = pb_service.create_pb_submission(
             metric=int_metric,
             activity=activity,
             players_string="Test, 123",
         )
+
+        approval_channel_id = os.getenv("APPROVAL_CHANNEL")
+        if not approval_channel_id:
+            await interaction.response.send_message(
+                "APPROVAL_CHANNEL is not configured in .env.", ephemeral=True
+            )
+            return
+
+        approval_channel = self.bot.get_channel(int(approval_channel_id))
+        if not approval_channel:
+            await interaction.response.send_message(
+                f"Approval channel not found in the server (<{approval_channel_id}>). Please check the configuration.",
+                ephemeral=True,
+            )
+
+        embed = Embed(
+            title="New PB Submission",
+        )
+
+        embed.color = discord.Color.yellow()
+
+        embed.add_field(name="Activity", value=activity, inline=False)
+        embed.add_field(name="PB Obtained", value=pb_obtained, inline=False)
+        embed.add_field(
+            name="Submitted By", value=interaction.user.mention, inline=False
+        )
+
+        embed.set_image(url=imgur_link)
+
+        embed.set_footer(text=id)
+        message = await approval_channel.send(embed=embed)
+        await message.add_reaction("✅")
+        await message.add_reaction("❌")
 
     @app_commands.command(
         name="list_activities", description="Show all activities stored in the database"

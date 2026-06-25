@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 from database import init_db, SessionLocal
 from models import Activity, Submission
+from services import highest_kc_service, pb_service, wom_client, time_service
 
 load_dotenv()
 
@@ -29,6 +30,8 @@ class Bot(commands.Bot):
                 print(f"Failed to load {cog}: {e}")
 
     async def on_ready(self):
+        # Unit Tests
+        await highest_kc_service.test()
         await self.tree.sync()
         print(f"{self.user} has connected to Discord!")
 

@@ -9,6 +9,7 @@ from services.wom_client import WiseOldManClient
 import sys
 from pathlib import Path
 from constants import highscore_boss_group
+import unittest.mock as mock
 
 # Get sibling dependencies
 project_root = Path(__file__).resolve().parent
@@ -94,3 +95,14 @@ async def build_highest_kcs_embed(category: int):
 
     embed = Embeds.highest_kcs(data, group.name)
     return embed
+
+
+async def test():
+    # Mock the WiseOldManClient to return the expected data
+    with mock.patch(
+        "services.wom_client.WiseOldManClient.get_top_placements_hiscores"
+    ) as mock_get_top_placements:
+        mock_get_top_placements.return_value = {}, {}
+        result1 = await build_highest_kcs_embed(1)
+
+    print(f"[Highest KC Service] test cases passed.")

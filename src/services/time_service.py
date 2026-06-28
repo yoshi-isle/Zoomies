@@ -10,7 +10,7 @@ def is_valid_time_format(metric: str) -> Tuple[bool, Optional[int]]:
     if not s:
         return False, None
 
-    pattern = r"^(?:(?:\d+:\d{2}(?:\.\d{2})?)|(?:\d+(?:\.\d{1,2})?))$"
+    pattern = r"^(?:(?:\d+:\d{2}(?:\.\d{1,2})?)|(?:\d+(?:\.\d{1,2})?))$"
     if not re.match(pattern, s):
         return False, None
 
@@ -61,6 +61,7 @@ test_cases = {
     "32:12.00.00": False,
     "2.00.00": False,
     "22:00.00": True,
+    "12:01.0": True,
 }
 
 test_counter = 0

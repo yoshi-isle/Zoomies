@@ -14,12 +14,12 @@ class HighestKillcountCog(commands.Cog):
     def __init__(self, bot: commands.Bot, logger: logging.Logger | None = None):
         self.bot = bot
         self.logger = logger or logging.getLogger(__name__)
-        self.logger.info("Static embed cog initialized")
+        self.logger.info("Highest KC cog initialized")
         self.check_category_needs_updating.start()
 
     @tasks.loop(minutes=30)
     async def check_category_needs_updating(self):
-        print("Checking if any categories need updating...")
+        self.logger.info("[Highest KC Cog] Checking if any categories need updating...")
         db: Session = next(get_db())
         highest_kc_reprocess = (
             db.query(HighestKCReprocess)
@@ -28,13 +28,12 @@ class HighestKillcountCog(commands.Cog):
         )
         if highest_kc_reprocess:
             print(
-                f"Found category that needs updating: {highest_kc_reprocess.category}, message: {highest_kc_reprocess.discord_message_id}"
+                f"[Highest KCs] Found category that needs updating: {highest_kc_reprocess.category}, message: {highest_kc_reprocess.discord_message_id}"
             )
             # Get the message thread by ID
             channel = await self.bot.fetch_channel(os.getenv("HIGHEST_KC_CHANNEL"))
-            print(channel)
             if not channel:
-                print("Could not find channel!")
+                self.logger.warning("[Highest KCs] Could not find channel.")
                 return
 
             message = await channel.fetch_message(
@@ -48,9 +47,6 @@ class HighestKillcountCog(commands.Cog):
             # Edit the message with new data
             await message.edit(embed=new_embed)
             highest_kc_service.update_reprocess_record(message)
-
-        else:
-            print("All clear!")
         db.commit()
 
     @app_commands.command(

@@ -91,18 +91,7 @@ async def build_highest_kcs_embed(category: int):
             }
 
     except Exception as e:
-        print("Failed section, skipping it", e)
+        print("[Highest KC] Failed section, skipping it", e)
 
     embed = Embeds.highest_kcs(data, group.name)
     return embed
-
-
-async def test():
-    # Mock the WiseOldManClient to return the expected data
-    with mock.patch(
-        "services.wom_client.WiseOldManClient.get_top_placements_hiscores"
-    ) as mock_get_top_placements:
-        mock_get_top_placements.return_value = {}, {}
-        result1 = await build_highest_kcs_embed(1)
-
-    print(f"[Highest KC Service] test cases passed.")

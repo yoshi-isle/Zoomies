@@ -21,7 +21,13 @@ class Bot(commands.Bot):
         self.Submission = Submission
 
     async def setup_hook(self) -> None:
-        cogs = ["cogs.submission", "cogs.static_embeds", "cogs.highest_killcounts"]
+        cogs = [
+            "cogs.submission",
+            "cogs.static_embeds",
+            "cogs.highest_killcounts",
+            "cogs.approval",
+            "cogs.display_pbs",
+        ]
         for cog in cogs:
             try:
                 await self.load_extension(cog)
@@ -30,8 +36,6 @@ class Bot(commands.Bot):
                 print(f"Failed to load {cog}: {e}")
 
     async def on_ready(self):
-        # Unit Tests
-        await highest_kc_service.test()
         await self.tree.sync()
         print(f"{self.user} has connected to Discord!")
 

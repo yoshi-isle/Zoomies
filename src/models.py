@@ -12,6 +12,7 @@ class Activity(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     activity_name: Mapped[str] = mapped_column(String(50), nullable=False)
+    category: Mapped[int] = mapped_column(Integer, nullable=False)
     is_time_based: Mapped[bool] = mapped_column(Boolean, nullable=False)
     emoji: Mapped[str] = mapped_column(String(50), nullable=True)
     team_size: Mapped[int] = mapped_column(Integer, nullable=False)

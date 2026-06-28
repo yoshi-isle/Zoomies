@@ -51,6 +51,7 @@ class SubmissionCog(commands.Cog):
         interaction: discord.Interaction,
         activity: str,
         pb_obtained: str,
+        player_names: str,
         image: discord.Attachment | None = None,
     ):
         # Get the activity from the db
@@ -107,7 +108,8 @@ class SubmissionCog(commands.Cog):
         id = pb_service.create_pb_submission(
             metric=int_metric,
             activity=activity,
-            players_string="Test, 123",
+            players_string=player_names,
+            imgur_link=imgur_link if image else "",
         )
 
         approval_channel_id = os.getenv("APPROVAL_CHANNEL")

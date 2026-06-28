@@ -54,6 +54,53 @@ class Embeds:
 
         return embed
 
+    def pb_category(display: dict):
+        embed = discord.Embed(
+            title="",
+            timestamp=discord.utils.utcnow(),
+        )
+
+        embed.set_footer(text="")
+
+        for activity_name, submissions in display.items():
+            value_lines = []
+
+            trophy_emojis = {1: "🥇", 2: "🥈", 3: "🥉"}
+            if submissions:
+                # Show existing submissions
+                for i, sub in enumerate(submissions[:3], 1):
+                    date_str = (
+                        sub["create_time"].strftime("%Y-%m-%d")
+                        if sub["create_time"]
+                        else "N/A"
+                    )
+                    players = sub["players"] or "Unknown"
+                    metric = convert_game_ticks_to_time(sub["metric"])
+
+                    # trophy emoji
+                    line = f"{trophy_emojis.get(i, '')} **{metric}** • {players} • {date_str}"
+
+                    if sub.get("imgur_url"):
+                        line += " [(proof)](" + sub["imgur_url"] + ")"
+
+                    value_lines.append(line)
+
+                # Fill remaining slots up to 3
+                for i in range(len(submissions) + 1, 4):
+                    value_lines.append(f"{trophy_emojis.get(i, '')} *N/A*")
+            else:
+                value = "> *No approved submissions yet.*"
+                embed.add_field(name=activity_name, value=value, inline=False)
+                continue
+
+            embed.add_field(
+                name=activity_name,
+                value="\n".join(value_lines),
+                inline=False,
+            )
+
+        return embed
+
 
 def get_clean_name(boss_name) -> str:
     clean_name = str(boss_name.name)
@@ -63,3 +110,12 @@ def get_clean_name(boss_name) -> str:
             clean_name = clean_name[:i] + " " + clean_name[i:]
 
     return clean_name
+
+
+def convert_game_ticks_to_time(ticks: int) -> str:
+    total_ms = ticks * 600
+    minutes, rem_ms = divmod(total_ms, 60_000)
+    seconds, ms = divmod(rem_ms, 1_000)
+    centiseconds = ms // 10
+
+    return f"{minutes}:{seconds:02}.{centiseconds:02}"

@@ -50,10 +50,13 @@ class ApprovalCog(commands.Cog):
             )
             return
 
-        # --- Handle approval or denial ---
-        if emoji != "✅" and emoji != "❌":
-            self.logger.info(
-                f"[Approval Cog] Reaction {emoji} is not a check or X. Ignoring"
+        # Find the PB leaderboard embed by category and update it
+        pb_channel = self.bot.get_channel(int(os.getenv("PB_CHANNEL")))
+
+        if not pb_channel:
+            self.logger.critical(
+                "[Approval Cog] PB channel does not exist. The service will not work properly. Exiting",
+                ephemeral=True,
             )
             return
 
@@ -72,25 +75,11 @@ class ApprovalCog(commands.Cog):
         )
 
         pb_service.approve_or_deny_pb_submission(int(footer), True)
-        await changelog_channel.send("New pb submission has been approved")
-        await message.delete()
-
-        # Find the PB leaderboard embed by category and update it
-        pb_channel = self.bot.get_channel(int(os.getenv("PB_CHANNEL")))
-
-        if not pb_channel:
-            self.logger.critical(
-                "[Approval Cog] PB channel does not exist. The service will not work properly. Exiting",
-                ephemeral=True,
-            )
-            return
 
         # Get the category from the submission record
         submission = pb_service.get_pb_submission_by_id(int(footer))
         activity = pb_service.get_activity_by_id(submission.activity)
         category = activity.category
-
-        print(category)
 
         pb_category_reprocess = pb_service.get_pb_category_reprocess_by_category(
             category
@@ -113,6 +102,36 @@ class ApprovalCog(commands.Cog):
                 ephemeral=True,
             )
             return
+
+        # --- Handle approval or denial ---
+        if emoji != "✅" and emoji != "❌":
+            self.logger.info(
+                f"[Approval Cog] Reaction {emoji} is not a check or X. Ignoring"
+            )
+            return
+
+        new_placement = pb_service.get_placement_for_activity(
+            activity_id=submission.activity,
+            metric=submission.metric,
+            is_time_based=True,
+        )
+
+        if new_placement <= 3:
+            changelog_message = await changelog_channel.send(
+                embed=Embeds.changelog(
+                    players=submission.players,
+                    activity=activity.activity_name,
+                    metric=submission.metric,
+                    imgur_url=submission.imgur_url,
+                    leaderboard_url=leaderboard_message.jump_url,
+                    new_placement=new_placement,
+                )
+            )
+
+            await changelog_message.add_reaction("🎉")
+            await changelog_message.add_reaction("👏")
+
+        await message.delete()
 
         embed = Embeds.pb_category(pb_service.get_top_pbs_for_category(category))
         await leaderboard_message.edit(embed=embed)

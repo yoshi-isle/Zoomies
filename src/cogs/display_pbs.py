@@ -2,6 +2,7 @@ import logging
 from discord import app_commands
 import discord
 from discord.ext import commands
+from models import PBCategoryReprocess
 from services import pb_service
 from embeds import Embeds
 
@@ -19,9 +20,14 @@ class DisplayPbsCog(commands.Cog):
     async def display_pb_category(
         self, interaction: discord.Interaction, category: int
     ):
-        await interaction.channel.send(
+        message = await interaction.channel.send(
             embed=Embeds.pb_category(pb_service.get_top_pbs_for_category(category))
         )
+
+        pb_category_reprocess = PBCategoryReprocess(
+            discord_message_id=message.id, category=category
+        )
+        pb_service.save_pb_category_reprocess(pb_category_reprocess)
 
 
 async def setup(bot: commands.Bot):

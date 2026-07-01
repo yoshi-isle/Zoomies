@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 import sys
 from pathlib import Path
+from embeds import Embeds
 from services import pb_service
 
 # Get sibling dependencies
@@ -20,7 +21,6 @@ class ApprovalCog(commands.Cog):
     # React to check or x emoji in a certain approval channel
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
-        print("on_raw_reaction_add")
         approval_channel = self.bot.get_channel(int(os.getenv("APPROVAL_CHANNEL")))
 
         if (
@@ -73,6 +73,49 @@ class ApprovalCog(commands.Cog):
 
         pb_service.approve_or_deny_pb_submission(int(footer), True)
         await changelog_channel.send("New pb submission has been approved")
+        await message.delete()
+
+        # Find the PB leaderboard embed by category and update it
+        pb_channel = self.bot.get_channel(int(os.getenv("PB_CHANNEL")))
+
+        if not pb_channel:
+            self.logger.critical(
+                "[Approval Cog] PB channel does not exist. The service will not work properly. Exiting",
+                ephemeral=True,
+            )
+            return
+
+        # Get the category from the submission record
+        submission = pb_service.get_pb_submission_by_id(int(footer))
+        activity = pb_service.get_activity_by_id(submission.activity)
+        category = activity.category
+
+        print(category)
+
+        pb_category_reprocess = pb_service.get_pb_category_reprocess_by_category(
+            category
+        )
+
+        if not pb_category_reprocess:
+            self.logger.critical(
+                "[Approval Cog] No pb_category_reprocess record found for category. The service will not work properly. Exiting",
+                ephemeral=True,
+            )
+            return
+
+        leaderboard_message = await pb_channel.fetch_message(
+            int(pb_category_reprocess.discord_message_id)
+        )
+
+        if not leaderboard_message:
+            self.logger.critical(
+                "[Approval Cog] No leaderboard message found for category. The service will not work properly. Exiting",
+                ephemeral=True,
+            )
+            return
+
+        embed = Embeds.pb_category(pb_service.get_top_pbs_for_category(category))
+        await leaderboard_message.edit(embed=embed)
 
 
 async def setup(bot: commands.Bot):

@@ -1,3 +1,4 @@
+import logging
 import os
 import discord
 from discord.ext import commands
@@ -19,6 +20,9 @@ class Bot(commands.Bot):
         self.SessionLocal = SessionLocal
         self.Activity = Activity
         self.Submission = Submission
+
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
 
     async def setup_hook(self) -> None:
         cogs = [

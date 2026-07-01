@@ -45,4 +45,15 @@ class HighestKCReprocess(Base):
     next_update: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
     def __repr__(self):
-        return f"<Submission(id={self.id}, metric={self.metric})>"
+        return f"<HighestKCReprocess(id={self.id}, category={self.category})>"
+
+
+class PBCategoryReprocess(Base):
+    __tablename__ = "pb_category_reprocess"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    discord_message_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    category: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    def __repr__(self):
+        return f"<PBCategory(id={self.id}, category={self.category})>"

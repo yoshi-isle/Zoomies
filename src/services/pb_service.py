@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Activity, Submission
+from models import Activity, PBCategoryReprocess, Submission
 
 
 def create_pb_submission(
@@ -97,5 +97,49 @@ def get_top_pbs_for_category(category: int):
 
         return display
 
+    finally:
+        db.close()
+
+
+def save_pb_category_reprocess(pb_category_reprocess):
+    db: Session = next(get_db())
+    try:
+        db.add(pb_category_reprocess)
+        db.commit()
+        db.refresh(pb_category_reprocess)
+        return pb_category_reprocess
+    finally:
+        db.close()
+
+
+def get_pb_submission_by_id(submission_id: int):
+    db: Session = next(get_db())
+    try:
+        submission_record = (
+            db.query(Submission).filter(Submission.id == submission_id).first()
+        )
+        return submission_record
+    finally:
+        db.close()
+
+
+def get_pb_category_reprocess_by_category(category: int):
+    db: Session = next(get_db())
+    try:
+        pb_category_reprocess_record = (
+            db.query(PBCategoryReprocess)
+            .filter(PBCategoryReprocess.category == category)
+            .first()
+        )
+        return pb_category_reprocess_record
+    finally:
+        db.close()
+
+
+def get_activity_by_id(activity_id: int):
+    db: Session = next(get_db())
+    try:
+        activity_record = db.query(Activity).filter(Activity.id == activity_id).first()
+        return activity_record
     finally:
         db.close()

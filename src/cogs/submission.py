@@ -134,11 +134,10 @@ class SubmissionCog(commands.Cog):
 
         embed.add_field(name="Activity", value=activity, inline=False)
         embed.add_field(name="PB Obtained", value=pb_obtained, inline=False)
-        embed.add_field(
-            name="Submitted By", value=interaction.user.mention, inline=False
-        )
+        embed.add_field(name="Player(s)", value=player_names, inline=False)
 
-        embed.set_image(url=imgur_link)
+        if image:
+            embed.set_image(url=imgur_link)
 
         embed.set_footer(text=id)
         message = await approval_channel.send(embed=embed)

@@ -1,0 +1,49 @@
+name: CI + Deploy Discord Bot
+
+on:
+  push:
+    branches: [ main, dev ]
+  workflow_dispatch:   # Allows manual trigger from GitHub UI
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Lint & Test (add your commands here)
+        run: |
+          # ruff check . || true
+          # pytest || true
+
+  deploy-dev:
+    needs: ci
+    if: github.ref == 'refs/heads/dev'
+    runs-on: [self-hosted, raspberry-pi]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy DEV version
+        run: |
+          export DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN_DEV }}"
+          # Add any other dev-specific keys here, e.g.:
+          # export OTHER_API_KEY="${{ secrets.OTHER_API_KEY_DEV }}"
+          docker compose -p zoomies-dev -f docker-compose.yml up -d --build
+
+  deploy-prod:
+    needs: ci
+    if: github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, raspberry-pi]
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy PROD version
+        run: |
+          export DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN_PROD }}"
+          # Add prod keys here
+          docker compose -p zoomies-prod -f docker-compose.yml up -d --build

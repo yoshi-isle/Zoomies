@@ -63,7 +63,7 @@ def get_top_pbs_for_category(category: int):
         # Get all activities for the given category
         activities = sorted(
             db.query(Activity).filter(Activity.category == category).all(),
-            key=lambda x: x.activity_name,
+            key=lambda x: x.team_size,
         )
 
         display = {activity.activity_name: [] for activity in activities}

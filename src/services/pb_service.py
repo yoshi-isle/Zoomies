@@ -61,13 +61,17 @@ def get_top_pbs_for_category(category: int):
 
     try:
         # Get all activities for the given category
-        activities = db.query(Activity).filter(Activity.category == category).all()
-
+        activities = sorted(
+            db.query(Activity).filter(Activity.category == category).all(),
+            key=lambda x: x.id,
+        )
         # Initialize display dictionary with activity names as keys
         # Each value will be a list of up to 3 submission dictionaries
         display = {activity.activity_name: [] for activity in activities}
 
         for activity in activities:
+            amount_to_display = activity.placements_to_show
+
             # Get the top 3 approved submissions, newest first
             top_submissions = (
                 db.query(Submission)
@@ -76,7 +80,7 @@ def get_top_pbs_for_category(category: int):
                     Submission.is_approved,
                 )
                 .order_by(Submission.metric.asc())
-                .limit(3)
+                .limit(amount_to_display)
                 .all()
             )
 
@@ -93,7 +97,11 @@ def get_top_pbs_for_category(category: int):
                 )
 
             # Assign the list (empty if no submissions)
-            display[activity.activity_name] = submission_list
+            display[activity.activity_name] = (
+                submission_list,
+                activity.emoji,
+                amount_to_display,
+            )
 
         return display
 

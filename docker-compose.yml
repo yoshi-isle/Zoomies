@@ -15,3 +15,5 @@ services:
       - HIGHEST_KC_CHANNEL
       - CHANGELOG_CHANNEL
       - PB_CHANNEL
+      - PYTHONUNBUFFERED=1
+      - PB_CHANNEL

@@ -65,6 +65,9 @@ class SubmissionCog(commands.Cog):
         except Exception as e:
             await interaction.response.send_message("Error", e)
 
+        changelog_channel_id = os.getenv("CHANGELOG_CHANNEL")
+        changelog_channel = self.bot.get_channel(int(changelog_channel_id))
+
         if activity_record.is_time_based:
             is_valid, int_metric = time_service.is_valid_time_format(pb_obtained)
 
@@ -87,7 +90,7 @@ class SubmissionCog(commands.Cog):
                 return
 
         await interaction.response.send_message(
-            "Your submission is valid and ready",
+            f"Thanks! Your submission has been sent for approval! Once it's approved, it will show up in {changelog_channel.jump_url}",
             ephemeral=True,
         )
 

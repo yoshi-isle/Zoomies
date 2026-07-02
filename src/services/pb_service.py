@@ -70,7 +70,7 @@ def get_top_pbs_for_category(category: int):
         display = {activity.activity_name: [] for activity in activities}
 
         for activity in activities:
-            amount_to_display = activity.placements_to_show if activities else 3
+            amount_to_display = activity.placements_to_show
 
             # Get the top 3 approved submissions, newest first
             top_submissions = (

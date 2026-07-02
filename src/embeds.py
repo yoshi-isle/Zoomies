@@ -91,7 +91,7 @@ class Embeds:
                 value_lines.append(line)
 
             # Fill remaining slots up to 3
-            for i in range(len(submissions) + 1, 4):
+            for i in range(len(submissions) + 1, amount_to_display + 1):
                 value_lines.append(f"{trophy_emojis.get(i, '')} -")
 
             embed.add_field(

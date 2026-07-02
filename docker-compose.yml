@@ -1,0 +1,17 @@
+services:
+  zoomies:
+    build: .
+    restart: unless-stopped
+    environment:
+      - DISCORD_BOT_TOKEN
+      - DATABASE_URL
+      - WOM_TOKEN
+      - IMGUR_CLIENT_ID
+      - IMGUR_CLIENT_SECRET
+      - IMGUR_ACCESS_TOKEN
+      - IMGUR_REFRESH_TOKEN
+      - WOM_GROUP_ID
+      - APPROVAL_CHANNEL
+      - HIGHEST_KC_CHANNEL
+      - CHANGELOG_CHANNEL
+      - PB_CHANNEL

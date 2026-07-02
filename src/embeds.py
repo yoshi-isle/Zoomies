@@ -101,6 +101,55 @@ class Embeds:
 
         return embed
 
+    def changelog(
+        players: str,
+        activity: str,
+        metric: str,
+        imgur_url: str,
+        leaderboard_url: str,
+        new_placement: int | None,
+    ):
+        embed = discord.Embed(
+            title="New PB Submitted!",
+            colour=0xFE86E4,
+            timestamp=discord.utils.utcnow(),
+        )
+
+        embed.add_field(
+            name="Submitter(s)",
+            value=players,
+        )
+
+        embed.add_field(
+            name="Activity",
+            value=activity,
+        )
+
+        # TODO - Time or integer
+        embed.add_field(
+            name="PB",
+            value=convert_game_ticks_to_time(metric),
+        )
+
+        embed.add_field(
+            name="Ranking",
+            value="🥇 1st place!"
+            if new_placement == 1
+            else "🥈 2nd place"
+            if new_placement == 2
+            else "🥉 3rd place",
+        )
+
+        embed.add_field(
+            name="",
+            value=f"Check out the leaderboard [here]({leaderboard_url})",
+        )
+
+        if imgur_url:
+            embed.set_image(url=imgur_url)
+
+        return embed
+
 
 def get_clean_name(boss_name) -> str:
     clean_name = str(boss_name.name)

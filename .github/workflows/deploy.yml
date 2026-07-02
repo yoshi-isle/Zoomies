@@ -1,0 +1,72 @@
+name: CI + Deploy Discord Bot
+
+on:
+  push:
+    branches: [ main, dev ]
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Lint & Test
+        run: |
+          # ruff check . || true
+          # pytest || true
+
+  deploy-dev:
+    needs: ci
+    if: github.ref == 'refs/heads/dev'
+    runs-on: [self-hosted, raspberry-pi]
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy DEV version
+        run: |
+          export DISCORD_BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }}"
+          export DATABASE_URL="${{ secrets.DATABASE_URL }}"
+          export WOM_TOKEN="${{ secrets.WOM_TOKEN }}"
+          export IMGUR_CLIENT_ID="${{ secrets.IMGUR_CLIENT_ID }}"
+          export IMGUR_CLIENT_SECRET="${{ secrets.IMGUR_CLIENT_SECRET }}"
+          export IMGUR_ACCESS_TOKEN="${{ secrets.IMGUR_ACCESS_TOKEN }}"
+          export IMGUR_REFRESH_TOKEN="${{ secrets.IMGUR_REFRESH_TOKEN }}"
+          export WOM_GROUP_ID="${{ vars.WOM_GROUP_ID }}"
+          export APPROVAL_CHANNEL="${{ vars.APPROVAL_CHANNEL }}"
+          export HIGHEST_KC_CHANNEL="${{ vars.HIGHEST_KC_CHANNEL }}"
+          export CHANGELOG_CHANNEL="${{ vars.CHANGELOG_CHANNEL }}"
+          export PB_CHANNEL="${{ vars.PB_CHANNEL }}"
+          echo "DEBUG: DATABASE_URL starts with: ${DATABASE_URL:0:20}..."
+          echo "DEBUG: CHANGELOG_CHANNEL starts with: ${CHANGELOG_CHANNEL:0:20}..."
+          docker compose -p zoomies-dev -f docker-compose.yml up -d --build
+
+  deploy-prod:
+    needs: ci
+    if: github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, raspberry-pi]
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy PROD version
+        run: |
+          export DISCORD_BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }}"
+          export DATABASE_URL="${{ secrets.DATABASE_URL }}"
+          export WOM_TOKEN="${{ secrets.WOM_TOKEN }}"
+          export IMGUR_CLIENT_ID="${{ secrets.IMGUR_CLIENT_ID }}"
+          export IMGUR_CLIENT_SECRET="${{ secrets.IMGUR_CLIENT_SECRET }}"
+          export IMGUR_ACCESS_TOKEN="${{ secrets.IMGUR_ACCESS_TOKEN }}"
+          export IMGUR_REFRESH_TOKEN="${{ secrets.IMGUR_REFRESH_TOKEN }}"
+          export WOM_GROUP_ID="${{ env.WOM_GROUP_ID }}"
+          export APPROVAL_CHANNEL="${{ env.APPROVAL_CHANNEL }}"
+          export HIGHEST_KC_CHANNEL="${{ env.HIGHEST_KC_CHANNEL }}"
+          export CHANGELOG_CHANNEL="${{ env.CHANGELOG_CHANNEL }}"
+          export PB_CHANNEL="${{ env.PB_CHANNEL }}"
+          
+          docker compose -p zoomies-prod -f docker-compose.yml up -d --build

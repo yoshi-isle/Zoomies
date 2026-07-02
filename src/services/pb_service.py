@@ -143,3 +143,41 @@ def get_activity_by_id(activity_id: int):
         return activity_record
     finally:
         db.close()
+
+
+def get_placement_for_activity(
+    activity_id: int, metric: int, is_time_based: bool = True
+):
+    """
+    Selects from the activity and orders by metric. Get's the placement of the metric based on the other records.
+    """
+    db: Session = next(get_db())
+    try:
+        if is_time_based:
+            # For time-based activities, lower metric is better
+            placement = (
+                db.query(Submission)
+                .filter(
+                    Submission.activity == activity_id,
+                    Submission.is_approved,
+                    Submission.metric < metric,
+                )
+                .count()
+                + 1
+            )
+        else:
+            # For non-time-based activities, higher metric is better
+            placement = (
+                db.query(Submission)
+                .filter(
+                    Submission.activity == activity_id,
+                    Submission.is_approved,
+                    Submission.metric > metric,
+                )
+                .count()
+                + 1
+            )
+
+        return placement
+    finally:
+        db.close()

@@ -43,7 +43,7 @@ jobs:
           export HIGHEST_KC_CHANNEL="${{ env.HIGHEST_KC_CHANNEL }}"
           export CHANGELOG_CHANNEL="${{ env.CHANGELOG_CHANNEL }}"
           export PB_CHANNEL="${{ env.PB_CHANNEL }}"
-          
+          echo "DEBUG: DATABASE_URL starts with: ${DATABASE_URL:0:20}..."
           docker compose -p zoomies-dev -f docker-compose.yml up -d --build
 
   deploy-prod:

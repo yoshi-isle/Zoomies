@@ -70,34 +70,29 @@ class Embeds:
                 2: "<:2ndplace:1514784692996669490>",
                 3: "<:3rdplace:1514784698692276426>",
             }
-            if submissions:
-                # Show existing submissions
-                for i, sub in enumerate(submissions[:3], 1):
-                    date_str = (
-                        sub["create_time"].strftime("%Y-%m-%d")
-                        if sub["create_time"]
-                        else "-"
-                    )
-                    players = sub["players"] or "Unknown"
-                    metric = convert_game_ticks_to_time(sub["metric"])
-
-                    # trophy emoji
-                    line = f"{trophy_emojis.get(i, '')} **{metric}** • {players} • {date_str}"
-
-                    if sub.get("imgur_url"):
-                        line += " [(proof)](" + sub["imgur_url"] + ")"
-
-                    value_lines.append(line)
-
-                # Fill remaining slots up to 3
-                for i in range(len(submissions) + 1, 4):
-                    value_lines.append(f"{trophy_emojis.get(i, '')} -")
-            else:
-                value = "> *No approved submissions yet.*"
-                embed.add_field(
-                    name=f"{activity_name} {emoji}", value=value, inline=False
+            # Show existing submissions
+            for i, sub in enumerate(submissions[:3], 1):
+                date_str = (
+                    sub["create_time"].strftime("%Y-%m-%d")
+                    if sub["create_time"]
+                    else "-"
                 )
-                continue
+                players = sub["players"] or "Unknown"
+                metric = convert_game_ticks_to_time(sub["metric"])
+
+                # trophy emoji
+                line = (
+                    f"{trophy_emojis.get(i, '')} **{metric}** • {players} • {date_str}"
+                )
+
+                if sub.get("imgur_url"):
+                    line += " [(proof)](" + sub["imgur_url"] + ")"
+
+                value_lines.append(line)
+
+            # Fill remaining slots up to 3
+            for i in range(len(submissions) + 1, 4):
+                value_lines.append(f"{trophy_emojis.get(i, '')} -")
 
             embed.add_field(
                 name=f"{activity_name} {emoji}",

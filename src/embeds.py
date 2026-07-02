@@ -1,5 +1,4 @@
 import discord
-from discord import emoji
 
 
 class Embeds:
@@ -66,14 +65,18 @@ class Embeds:
         for activity_name, (submissions, emoji) in display.items():
             value_lines = []
 
-            trophy_emojis = {1: "🥇", 2: "🥈", 3: "🥉"}
+            trophy_emojis = {
+                1: "<:1stplace:1514784685295927435>",
+                2: "<:2ndplace:1514784692996669490>",
+                3: "<:3rdplace:1514784698692276426>",
+            }
             if submissions:
                 # Show existing submissions
                 for i, sub in enumerate(submissions[:3], 1):
                     date_str = (
                         sub["create_time"].strftime("%Y-%m-%d")
                         if sub["create_time"]
-                        else "N/A"
+                        else "-"
                     )
                     players = sub["players"] or "Unknown"
                     metric = convert_game_ticks_to_time(sub["metric"])
@@ -88,7 +91,7 @@ class Embeds:
 
                 # Fill remaining slots up to 3
                 for i in range(len(submissions) + 1, 4):
-                    value_lines.append(f"{trophy_emojis.get(i, '')} *N/A*")
+                    value_lines.append(f"{trophy_emojis.get(i, '')} -")
             else:
                 value = "> *No approved submissions yet.*"
                 embed.add_field(
@@ -113,7 +116,7 @@ class Embeds:
         new_placement: int | None,
     ):
         embed = discord.Embed(
-            title="New PB Submitted!",
+            title="New PB Achieved!",
             colour=0xFE86E4,
             timestamp=discord.utils.utcnow(),
         )
@@ -136,11 +139,11 @@ class Embeds:
 
         embed.add_field(
             name="Ranking",
-            value="🥇 1st place!"
+            value="<:1stplace:1514784685295927435> 1st place!"
             if new_placement == 1
-            else "🥈 2nd place"
+            else "<:2ndplace:1514784692996669490> 2nd place"
             if new_placement == 2
-            else "🥉 3rd place",
+            else "<:3rdplace:1514784698692276426> 3rd place",
         )
 
         embed.add_field(

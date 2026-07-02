@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 
 from database import init_db, SessionLocal
 from models import Activity, Submission
-from services import highest_kc_service, pb_service, wom_client, time_service
 
 load_dotenv()
 

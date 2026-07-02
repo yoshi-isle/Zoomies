@@ -16,3 +16,4 @@ services:
       - CHANGELOG_CHANNEL
       - PB_CHANNEL
       - PYTHONUNBUFFERED=1
+      - PB_CHANNEL

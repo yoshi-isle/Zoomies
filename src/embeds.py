@@ -1,4 +1,5 @@
 import discord
+from discord import emoji
 
 
 class Embeds:
@@ -62,7 +63,7 @@ class Embeds:
 
         embed.set_footer(text="")
 
-        for activity_name, submissions in display.items():
+        for activity_name, (submissions, emoji) in display.items():
             value_lines = []
 
             trophy_emojis = {1: "🥇", 2: "🥈", 3: "🥉"}
@@ -90,11 +91,13 @@ class Embeds:
                     value_lines.append(f"{trophy_emojis.get(i, '')} *N/A*")
             else:
                 value = "> *No approved submissions yet.*"
-                embed.add_field(name=activity_name, value=value, inline=False)
+                embed.add_field(
+                    name=f"{activity_name} {emoji}", value=value, inline=False
+                )
                 continue
 
             embed.add_field(
-                name=activity_name,
+                name=f"{activity_name} {emoji}",
                 value="\n".join(value_lines),
                 inline=False,
             )

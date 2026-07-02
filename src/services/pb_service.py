@@ -93,7 +93,7 @@ def get_top_pbs_for_category(category: int):
                 )
 
             # Assign the list (empty if no submissions)
-            display[activity.activity_name] = submission_list
+            display[activity.activity_name] = (submission_list, activity.emoji)
 
         return display
 

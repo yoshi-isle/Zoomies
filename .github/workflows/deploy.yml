@@ -3,7 +3,7 @@ name: CI + Deploy Discord Bot
 on:
   push:
     branches: [ main, dev ]
-  workflow_dispatch:   # Allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   ci:
@@ -17,12 +17,12 @@ jobs:
           cache: 'pip'
       - name: Install deps
         run: pip install -r requirements.txt
-      - name: Lint & Test (add your commands here)
+      - name: Lint & Test
         run: |
           # ruff check . || true
           # pytest || true
 
-    deploy-dev:
+  deploy-dev:
     needs: ci
     if: github.ref == 'refs/heads/dev'
     runs-on: [self-hosted, raspberry-pi]
@@ -55,6 +55,17 @@ jobs:
       - uses: actions/checkout@v4
       - name: Deploy PROD version
         run: |
-          export DISCORD_TOKEN="${{ secrets.DISCORD_TOKEN_PROD }}"
-          # Add prod keys here
+          export DISCORD_BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }}"
+          export DATABASE_URL="${{ secrets.DATABASE_URL }}"
+          export WOM_TOKEN="${{ secrets.WOM_TOKEN }}"
+          export IMGUR_CLIENT_ID="${{ secrets.IMGUR_CLIENT_ID }}"
+          export IMGUR_CLIENT_SECRET="${{ secrets.IMGUR_CLIENT_SECRET }}"
+          export IMGUR_ACCESS_TOKEN="${{ secrets.IMGUR_ACCESS_TOKEN }}"
+          export IMGUR_REFRESH_TOKEN="${{ secrets.IMGUR_REFRESH_TOKEN }}"
+          export WOM_GROUP_ID="${{ secrets.WOM_GROUP_ID }}"
+          export APPROVAL_CHANNEL="${{ secrets.APPROVAL_CHANNEL }}"
+          export HIGHEST_KC_CHANNEL="${{ secrets.HIGHEST_KC_CHANNEL }}"
+          export CHANGELOG_CHANNEL="${{ secrets.CHANGELOG_CHANNEL }}"
+          export PB_CHANNEL="${{ secrets.PB_CHANNEL }}"
+          
           docker compose -p zoomies-prod -f docker-compose.yml up -d --build

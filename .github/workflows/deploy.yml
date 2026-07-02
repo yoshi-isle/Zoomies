@@ -38,11 +38,11 @@ jobs:
           export IMGUR_CLIENT_SECRET="${{ secrets.IMGUR_CLIENT_SECRET }}"
           export IMGUR_ACCESS_TOKEN="${{ secrets.IMGUR_ACCESS_TOKEN }}"
           export IMGUR_REFRESH_TOKEN="${{ secrets.IMGUR_REFRESH_TOKEN }}"
-          export WOM_GROUP_ID="${{ secrets.WOM_GROUP_ID }}"
-          export APPROVAL_CHANNEL="${{ secrets.APPROVAL_CHANNEL }}"
-          export HIGHEST_KC_CHANNEL="${{ secrets.HIGHEST_KC_CHANNEL }}"
-          export CHANGELOG_CHANNEL="${{ secrets.CHANGELOG_CHANNEL }}"
-          export PB_CHANNEL="${{ secrets.PB_CHANNEL }}"
+          export WOM_GROUP_ID="${{ env.WOM_GROUP_ID }}"
+          export APPROVAL_CHANNEL="${{ env.APPROVAL_CHANNEL }}"
+          export HIGHEST_KC_CHANNEL="${{ env.HIGHEST_KC_CHANNEL }}"
+          export CHANGELOG_CHANNEL="${{ env.CHANGELOG_CHANNEL }}"
+          export PB_CHANNEL="${{ env.PB_CHANNEL }}"
           
           docker compose -p zoomies-dev -f docker-compose.yml up -d --build
 
@@ -62,10 +62,10 @@ jobs:
           export IMGUR_CLIENT_SECRET="${{ secrets.IMGUR_CLIENT_SECRET }}"
           export IMGUR_ACCESS_TOKEN="${{ secrets.IMGUR_ACCESS_TOKEN }}"
           export IMGUR_REFRESH_TOKEN="${{ secrets.IMGUR_REFRESH_TOKEN }}"
-          export WOM_GROUP_ID="${{ secrets.WOM_GROUP_ID }}"
-          export APPROVAL_CHANNEL="${{ secrets.APPROVAL_CHANNEL }}"
-          export HIGHEST_KC_CHANNEL="${{ secrets.HIGHEST_KC_CHANNEL }}"
-          export CHANGELOG_CHANNEL="${{ secrets.CHANGELOG_CHANNEL }}"
-          export PB_CHANNEL="${{ secrets.PB_CHANNEL }}"
+          export WOM_GROUP_ID="${{ env.WOM_GROUP_ID }}"
+          export APPROVAL_CHANNEL="${{ env.APPROVAL_CHANNEL }}"
+          export HIGHEST_KC_CHANNEL="${{ env.HIGHEST_KC_CHANNEL }}"
+          export CHANGELOG_CHANNEL="${{ env.CHANGELOG_CHANNEL }}"
+          export PB_CHANNEL="${{ env.PB_CHANNEL }}"
           
           docker compose -p zoomies-prod -f docker-compose.yml up -d --build

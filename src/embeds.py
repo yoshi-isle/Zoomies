@@ -81,9 +81,7 @@ class Embeds:
                 metric = convert_game_ticks_to_time(sub["metric"])
 
                 # trophy emoji
-                line = (
-                    f"{trophy_emojis.get(i, '')} **{metric}** • {players} • {date_str}"
-                )
+                line = f"> {trophy_emojis.get(i, '')} **{metric}** • {players} • {date_str}"
 
                 if sub.get("imgur_url"):
                     line += " [(proof)](" + sub["imgur_url"] + ")"

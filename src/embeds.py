@@ -62,7 +62,7 @@ class Embeds:
 
         embed.set_footer(text="")
 
-        for activity_name, (submissions, emoji) in display.items():
+        for activity_name, (submissions, emoji, amount_to_display) in display.items():
             value_lines = []
 
             trophy_emojis = {
@@ -71,7 +71,7 @@ class Embeds:
                 3: "<:3rdplace:1514784698692276426>",
             }
             # Show existing submissions
-            for i, sub in enumerate(submissions[:3], 1):
+            for i, sub in enumerate(submissions[:amount_to_display], 1):
                 date_str = (
                     sub["create_time"].strftime("%Y-%m-%d")
                     if sub["create_time"]

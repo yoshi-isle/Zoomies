@@ -1,4 +1,5 @@
 import logging
+import os
 from discord import app_commands
 import discord
 from discord.ext import commands
@@ -28,6 +29,23 @@ class DisplayPbsCog(commands.Cog):
             discord_message_id=message.id, category=category
         )
         pb_service.save_pb_category_reprocess(pb_category_reprocess)
+
+    @app_commands.command(
+        name="refresh_all_pbs",
+        description="Refresh all PB categories in the current channel.",
+    )
+    async def refresh_all_pbs(self, interaction: discord.Interaction):
+        pb_channel = self.bot.get_channel(int(os.getenv("PB_CHANNEL")))
+
+        for category in range(1, 8):
+            pb_category_reprocess = pb_service.get_pb_category_reprocess_by_category(
+                category
+            )
+            leaderboard_message = await pb_channel.fetch_message(
+                int(pb_category_reprocess.discord_message_id)
+            )
+            embed = Embeds.pb_category(pb_service.get_top_pbs_for_category(category))
+            await leaderboard_message.edit(embed=embed)
 
 
 async def setup(bot: commands.Bot):

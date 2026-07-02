@@ -116,7 +116,9 @@ class ApprovalCog(commands.Cog):
             is_time_based=True,
         )
 
-        if new_placement <= 3:
+        amount_to_display = activity.placements_to_show if activity else 3
+
+        if new_placement <= amount_to_display:
             changelog_message = await changelog_channel.send(
                 embed=Embeds.changelog(
                     players=submission.players,

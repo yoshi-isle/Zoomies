@@ -70,6 +70,8 @@ def get_top_pbs_for_category(category: int):
         display = {activity.activity_name: [] for activity in activities}
 
         for activity in activities:
+            amount_to_display = activity.placements_to_show if activities else 3
+
             # Get the top 3 approved submissions, newest first
             top_submissions = (
                 db.query(Submission)
@@ -78,7 +80,7 @@ def get_top_pbs_for_category(category: int):
                     Submission.is_approved,
                 )
                 .order_by(Submission.metric.asc())
-                .limit(3)
+                .limit(amount_to_display)
                 .all()
             )
 
